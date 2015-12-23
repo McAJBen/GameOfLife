@@ -8,8 +8,6 @@ import javax.swing.JFrame;
 public class ScreenJFrame extends JFrame {
 
 	private static final Dimension SCREEN_SIZE = new Dimension(600, 600),
-			//SCREEN_OFFSET = new Dimension(7, 30);
-			//SCREEN_OFFSET = new Dimension(16, 35);
 			SCREEN_OFFSET = new Dimension(16, 39);
 	private static final String SCREEN_TITLE_BAR = "Game of Life";
 

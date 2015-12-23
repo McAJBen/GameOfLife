@@ -10,10 +10,13 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class ScreenJPanel extends JPanel {
 	
-	private static final int FPS = 60,
+	private static final int 
+			FPS = 60,
 			TICK = 1;
-	private static final double FPS_TIME = 1000000000 / (double)FPS,
-			TICK_TIME = 1000000 * (double)TICK;
+	
+	private static final double 
+			FPS_TIME = 1_000_000_000 / (double)FPS,
+			TICK_TIME = 1_000_000 * (double)TICK;
 	
 	private long lastFrameTime;
 	private long lastTickTime;
@@ -21,6 +24,7 @@ public class ScreenJPanel extends JPanel {
 	GameOfLifeMouseMotionListener mouseListener;
 
 	public ScreenJPanel() {
+		
 		game = new Game(50);
 		mouseListener = new GameOfLifeMouseMotionListener();
 		addMouseListener(mouseListener);
