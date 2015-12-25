@@ -93,7 +93,6 @@ public class Menu extends GridPane {
 	private class OnApplySize implements EventHandler<MouseEvent> {
 		@Override
 		public void handle(MouseEvent event) {
-			// TODO change dimensions of blocks
 			int x = Integer.parseInt(width.getText());
 			int y = Integer.parseInt(height.getText());
 			

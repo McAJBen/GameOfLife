@@ -6,12 +6,13 @@ import javafx.scene.shape.StrokeType;
 
 public class Block {
 	private boolean alive;
-	private boolean futureAlive;
+	private byte 
+		neighbors,
+		history;
 	private Rectangle rectangle;
 	
 	public Block(int x, int y, int width, int height) {
-		
-		futureAlive = false;
+		history = 100;
 		rectangle = new Rectangle(width, height);
 		rectangle.setStrokeType(StrokeType.OUTSIDE);
 		rectangle.setStroke(Color.web("gray", 1));
@@ -24,30 +25,31 @@ public class Block {
 		rectangle.setOnMousePressed(e -> alternateAlive());
 	}
 	
-	public void alternateAlive() {
+	private void alternateAlive() {
 		changeAlive(!alive);
 	}
 	
 	private void changeAlive(boolean b) {
 		alive = b;
-		rectangle.setFill(alive ? Color.BLACK : Color.WHITE);
+		rectangle.setFill(alive ? Color.BLACK : getWhite());
 	}
 	
-	public void setFutureAlive(Block[][] bl, int x, int y) {
-		
-		byte aliveNear = 0;
-		
-		int maxX = Math.min(x + 2, bl.length);
-		int maxY = Math.min(y + 2, bl[0].length);
-		
-		for (int i = Math.max(0, x - 1); i < maxX; i++) {
-			for (int j = Math.max(0, y - 1); j < maxY; j++) {
-				if (bl[i][j].isAlive()) {
-					aliveNear++;
+	public void setNear(Block[][] bl, int x, int y) {
+		if (alive) {
+			int maxX = Math.min(x + 2, bl.length);
+			int maxY = Math.min(y + 2, bl[0].length);
+			int minY = Math.max(0, y - 1);
+			
+			for (int i = Math.max(0, x - 1); i < maxX; i++) {
+				for (int j = minY; j < maxY; j++) {
+					bl[i][j].addNeighbor();
 				}
 			}
 		}
-		futureAlive = ((aliveNear == 3) ? true : (isAlive() && aliveNear == 4));
+	}
+	
+	private void addNeighbor() {
+		neighbors++;
 	}
 
 	public Rectangle getRectangle() {
@@ -55,11 +57,19 @@ public class Block {
 	}
 	
 	public void stepFuture() {
-		changeAlive(futureAlive);
-	}
-	
-	public boolean isAlive() {
-		return alive;
+		if (neighbors == 3 ? true : (alive && neighbors == 4)) {
+			changeAlive(true);
+		}
+		else {
+			changeAlive(false);
+		}
+		if (alive) {
+			history = 50;
+		}
+		else if (history < 100) {
+			history++;
+		}
+		neighbors = 0;
 	}
 
 	public void changeWidth(int x, int width) {
@@ -72,4 +82,8 @@ public class Block {
 		rectangle.setHeight(height);
 	}
 	
+	private Color getWhite() {
+		double c = (double)history / Byte.MAX_VALUE;
+		return new Color(c, c, c, 1);
+	}
 }

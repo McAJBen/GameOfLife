@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import javafx.scene.Group;
 
 public class BlockContainer implements Runnable {
-	
+	private static Thread thread;
 	
 	private static Dimension blockDim = new Dimension(25, 25);
 	private static Dimension blockSize;
@@ -56,7 +56,7 @@ public class BlockContainer implements Runnable {
 	public static void step() {
 		for (int i = 0; i < blockDim.width; i++) {
         	for (int j = 0; j < blockDim.height; j++) {
-        		blocks[i][j].setFutureAlive(blocks, i, j);
+        		blocks[i][j].setNear(blocks, i, j);
         	}
         }
 		for (int i = 0; i < blockDim.width; i++) {
@@ -77,25 +77,34 @@ public class BlockContainer implements Runnable {
 
 	@Override
 	public void run() {
-		while (running) {
+		while (true) {
 			long startTime = System.currentTimeMillis();
 			BlockContainer.step();
-			while (startTime + msDelay > System.currentTimeMillis() || !running) {} // wait
+			while (startTime + msDelay > System.currentTimeMillis()) {} // wait
 		}
 	}
 
 	public static void start(String string) {
-		running = true;
+		
 		double mps = Integer.parseInt(string);
 		msDelay = (long) (1_000 / mps);
 		
-		BlockContainer step = new BlockContainer();
-		Thread thread = new Thread(step);
-		thread.start();
+		if (thread != null) {
+			thread.resume();
+		}
+		else {
+			BlockContainer step = new BlockContainer();
+			thread = new Thread(step);
+			thread.start();
+		}
+		
+		// TODO fix fast thread errors
+		// TODO fix threads staying after they are 'stopped'
 	}
 	
 	public static void stop() {
 		running = false;
+		thread.suspend();
 	}
 	
 	
